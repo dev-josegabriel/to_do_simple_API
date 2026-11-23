@@ -6,6 +6,7 @@ import com.josedev.to_do_simple.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,6 +16,10 @@ public class UserService {
 
     public UserService(UserRepository userRepository, TaskRepository taskRepository) {
         this.userRepository = userRepository;
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     public User findById(Long id) {
