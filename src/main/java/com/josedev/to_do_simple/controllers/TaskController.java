@@ -2,6 +2,7 @@ package com.josedev.to_do_simple.controllers;
 
 import com.josedev.to_do_simple.models.Task;
 import com.josedev.to_do_simple.services.TaskService;
+import com.josedev.to_do_simple.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +16,16 @@ import java.util.List;
 public class TaskController {
     private final TaskService taskService;
 
-    public TaskController(TaskService taskService) {
+    private final UserService userService;
+
+    public TaskController(TaskService taskService, UserService userService) {
         this.taskService = taskService;
+        this.userService = userService;
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Task>> findAllByUserId(@PathVariable Long userId) {
+        userService.findById(userId);
         List<Task> objs = this.taskService.findAllByUserId(userId);
         return ResponseEntity.status(HttpStatus.OK).body(objs);
     }
