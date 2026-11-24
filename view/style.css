@@ -1,61 +1,520 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+/* =========================================================
+   VARIÁVEIS DE TEMA (claro é o padrão, escuro sobrescreve)
+   ========================================================= */
+:root {
+    --bg: #eef1f6;
+    --sidebar-bg: #f3f4f6;
+    --content-bg: #ffffff;
+    --text: #111827;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+
+    --accent: #2563eb;
+    --accent-soft: #dbeafe;
+    --accent-text: #ffffff;
+
+    --pill-bg: #f3f4f6;
+    --pill-text: #374151;
+    --pill-active-bg: #374151;
+    --pill-active-text: #ffffff;
+
+    --completed-bg: #dcfce7;
+    --completed-border: #86efac;
+    --pending-bg: #fee2e2;
+    --pending-border: #fca5a5;
+
+    --icon-check-bg: #bbf7d0;
+    --icon-edit-bg: #fde68a;
+    --icon-delete-bg: #fecaca;
+
+    --nav-active-bg: #e5e7eb;
+
+    --shadow: 0 1.5rem 3rem rgba(17, 24, 39, 0.08);
+}
+
+/* Tema escuro: mesma estrutura, cores diferentes */
+[data-theme="dark"] {
+    --bg: #0f172a;
+    --sidebar-bg: #1f2937;
+    --content-bg: #1f2937;
+    --text: #f9fafb;
+    --text-muted: #9ca3af;
+    --border: #374151;
+
+    --accent-soft: #1e3a8a;
+
+    --pill-bg: #374151;
+    --pill-text: #e5e7eb;
+    --pill-active-bg: #6b7280;
+    --pill-active-text: #ffffff;
+
+    --completed-bg: #14532d;
+    --completed-border: #22c55e;
+    --pending-bg: #7f1d1d;
+    --pending-border: #ef4444;
+
+    --icon-check-bg: #166534;
+    --icon-edit-bg: #92400e;
+    --icon-delete-bg: #991b1b;
+
+    --nav-active-bg: #374151;
+
+    --shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.35);
+}
+
+* {
+    box-sizing: border-box;
+}
+
 body {
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    margin: 0;
+    font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* =========================================================
+   LAYOUT GERAL: sidebar fixa + conteúdo centralizado
+   ========================================================= */
+.app {
+    display: flex;
+    align-items: stretch;
     min-height: 100vh;
 }
 
-#loading {
+.sidebar {
+    width: 230px;
+    flex-shrink: 0;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 1.1rem;
     min-height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
 }
 
-.spinner-border {
-    color: #fff;
-    width: 3rem;
-    height: 3rem;
+.sidebar::-webkit-scrollbar {
+    width: 5px;
 }
 
-.app-card {
-    max-width: 720px;
-    margin: 3rem auto;
-    border: none;
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--border);
     border-radius: 1rem;
-    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.25);
 }
 
-.app-title {
-    font-weight: 700;
-    color: #2575fc;
+/* O conteúdo ocupa o espaço restante, mas o cartão interno fica
+   centralizado nesse espaço em vez de grudado na esquerda */
+.content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 2.5rem 2rem;
 }
 
-.input-group .btn {
+.content-inner {
+    width: 100%;
+    max-width: 760px;
+    background: var(--content-bg);
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    box-shadow: var(--shadow);
+    padding: 2rem 2.5rem;
+}
+
+/* =========================================================
+   SIDEBAR: cabeçalho e busca
+   ========================================================= */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.1rem;
+}
+
+.sidebar-title {
+    font-weight: 800;
+    font-size: 1.15rem;
+}
+
+.toggle-mode {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--content-bg);
+    border: 1px solid var(--border);
+    border-radius: 2rem;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.72rem;
     font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    font-family: inherit;
 }
 
-#tasks tr {
-    transition: background-color 0.15s ease-in-out;
+.toggle-mode:hover {
+    background: var(--nav-active-bg);
 }
 
-.task-description {
-    border: 1px solid transparent;
-    background-color: transparent;
+.search-box {
+    position: relative;
+    margin-bottom: 1.4rem;
 }
 
-.task-description:focus {
-    border-color: #2575fc;
-    background-color: #fff;
-}
-
-.save-task, .delete-task {
-    border-radius: 0.5rem;
-}
-
-#errorAlert {
-    border-radius: 0.75rem;
-}
-
-.table thead th {
-    color: #6c757d;
+.search-icon {
+    position: absolute;
+    left: 0.7rem;
+    top: 50%;
+    transform: translateY(-50%);
     font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 2px solid #eee;
+    opacity: 0.55;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.5rem 0.6rem 0.5rem 2rem;
+    border-radius: 0.7rem;
+    border: 1px solid var(--border);
+    background: var(--content-bg);
+    color: var(--text);
+    font-size: 0.85rem;
+    font-family: inherit;
+}
+
+/* =========================================================
+   SIDEBAR: seções (TAREFAS / LISTAS / ETIQUETAS)
+   ========================================================= */
+.sidebar-section {
+    margin-bottom: 1.4rem;
+}
+
+.sidebar-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+}
+
+.nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.45rem 0.55rem;
+    border-radius: 0.65rem;
+    font-size: 0.87rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 0.2rem;
+    transition: background-color 0.12s ease;
+}
+
+.nav-item:hover {
+    background: var(--nav-active-bg);
+}
+
+.nav-item.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.nav-icon {
+    font-size: 0.95rem;
+    width: 1.1rem;
+    text-align: center;
+}
+
+.nav-name {
+    flex: 1;
+}
+
+.badge {
+    background: var(--accent);
+    color: var(--accent-text);
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 1rem;
+    padding: 0.08rem 0.5rem;
+    min-width: 1.4rem;
+    text-align: center;
+}
+
+.add-list-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.45rem 0.55rem;
+    font-family: inherit;
+}
+
+.tag-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.tag-item {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding: 0.2rem 0.5rem;
+}
+
+/* =========================================================
+   CONTEÚDO PRINCIPAL: título, formulário e filtros
+   ========================================================= */
+.page-title {
+    font-size: 1.65rem;
+    font-weight: 800;
+    margin: 0 0 1.25rem 0;
+}
+
+.task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 1.25rem;
+}
+
+.task-form input,
+.task-form textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 0.7rem;
+    padding: 0.75rem 1rem;
+    font-family: inherit;
+    font-size: 0.92rem;
+    background: var(--content-bg);
+    color: var(--text);
+}
+
+.task-form input:focus,
+.task-form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.task-form textarea {
+    resize: vertical;
+    min-height: 4.5rem;
+}
+
+.btn-add-task {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--accent);
+    color: var(--accent-text);
+    border: none;
+    border-radius: 0.7rem;
+    padding: 0.6rem 1.2rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.12s ease;
+}
+
+.btn-add-task:hover {
+    opacity: 0.9;
+}
+
+.filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.4rem;
+}
+
+.filter-pill {
+    background: var(--pill-bg);
+    color: var(--pill-text);
+    border: none;
+    border-radius: 1.2rem;
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.filter-pill.active {
+    background: var(--pill-active-bg);
+    color: var(--pill-active-text);
+}
+
+/* =========================================================
+   CARDS DE TAREFA
+   ========================================================= */
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.task-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border-radius: 0.85rem;
+    border: 1px solid var(--border);
+    padding: 0.9rem 1.1rem;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.task-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0.5rem 1rem rgba(17, 24, 39, 0.08);
+}
+
+.task-card.completed {
+    background: var(--completed-bg);
+    border-color: var(--completed-border);
+}
+
+.task-card.pending {
+    background: var(--pending-bg);
+    border-color: var(--pending-border);
+}
+
+.task-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-info-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.task-info-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}
+
+.task-card.completed .task-info-title,
+.task-card.completed .task-info-desc {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.task-actions {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+.task-actions button {
+    width: 1.9rem;
+    height: 1.9rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.task-actions .btn-check {
+    background: var(--icon-check-bg);
+}
+
+.task-actions .btn-edit {
+    background: var(--icon-edit-bg);
+}
+
+.task-actions .btn-delete {
+    background: var(--icon-delete-bg);
+}
+
+.task-actions button:hover {
+    filter: brightness(0.95);
+}
+
+.task-card.completed .task-actions button {
+    opacity: 0.6;
+}
+
+/* Edição inline (quando clica no lápis) */
+.task-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    flex: 1;
+}
+
+.task-edit-form input,
+.task-edit-form textarea {
+    border: 1px solid var(--border);
+    border-radius: 0.55rem;
+    padding: 0.45rem 0.65rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    background: var(--content-bg);
+    color: var(--text);
+}
+
+.task-edit-form textarea {
+    resize: vertical;
+    min-height: 2.5rem;
+}
+
+.empty-message {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 2.5rem 0;
+}
+
+.placeholder-view {
+    color: var(--text-muted);
+    padding: 2rem 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =========================================================
+   RESPONSIVO: sidebar empilha em telas pequenas
+   ========================================================= */
+@media (max-width: 720px) {
+    .app {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+        max-height: none;
+        position: static;
+    }
+
+    .content {
+        padding: 1.5rem 1rem;
+    }
+
+    .content-inner {
+        padding: 1.5rem;
+    }
 }
