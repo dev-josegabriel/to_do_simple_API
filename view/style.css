@@ -1,0 +1,61 @@
+body {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    min-height: 100vh;
+}
+
+#loading {
+    min-height: 100vh;
+}
+
+.spinner-border {
+    color: #fff;
+    width: 3rem;
+    height: 3rem;
+}
+
+.app-card {
+    max-width: 720px;
+    margin: 3rem auto;
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.25);
+}
+
+.app-title {
+    font-weight: 700;
+    color: #2575fc;
+}
+
+.input-group .btn {
+    font-weight: 600;
+}
+
+#tasks tr {
+    transition: background-color 0.15s ease-in-out;
+}
+
+.task-description {
+    border: 1px solid transparent;
+    background-color: transparent;
+}
+
+.task-description:focus {
+    border-color: #2575fc;
+    background-color: #fff;
+}
+
+.save-task, .delete-task {
+    border-radius: 0.5rem;
+}
+
+#errorAlert {
+    border-radius: 0.75rem;
+}
+
+.table thead th {
+    color: #6c757d;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #eee;
+}
