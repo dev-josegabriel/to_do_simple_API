@@ -1,5 +1,7 @@
 package com.josedev.to_do_simple.services;
 
+import com.josedev.to_do_simple.exceptions.TaskNotFoundException;
+import com.josedev.to_do_simple.exceptions.UserHasRelatedEntitiesException;
 import com.josedev.to_do_simple.models.Task;
 import com.josedev.to_do_simple.models.User;
 import com.josedev.to_do_simple.repositories.TaskRepository;
@@ -31,7 +33,7 @@ public class TaskService {
     public Task findById(Long id) {
         Optional<Task> task = this.taskRepository.findById(id);
         return task.orElseThrow(
-                () -> new RuntimeException("Task not found! Id: " + id + ", Typo: " + Task.class.getName())
+                () -> new TaskNotFoundException("Task not found! Id: " + id + ", Typo: " + Task.class.getName())
         );
     }
 
@@ -48,7 +50,7 @@ public class TaskService {
     public Task updateTask(Task obj) {
         Task newObj = findById(obj.getId());
         newObj.setDescription(obj.getDescription());
-        return this.taskRepository.save(obj);
+        return this.taskRepository.save(newObj);
     }
 
     public void deleteTask(Long id) {
@@ -56,7 +58,7 @@ public class TaskService {
         try {
             this.taskRepository.deleteById(id);
         } catch (Exception ex) {
-            throw new RuntimeException("Não é possível excluir pois há entidades relacionadas!");
+            throw new UserHasRelatedEntitiesException("Cannot delete as there are related entities!");
         }
     }
 }

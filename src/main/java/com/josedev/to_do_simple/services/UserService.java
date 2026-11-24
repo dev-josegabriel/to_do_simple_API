@@ -1,5 +1,7 @@
 package com.josedev.to_do_simple.services;
 
+import com.josedev.to_do_simple.exceptions.UserHasRelatedEntitiesException;
+import com.josedev.to_do_simple.exceptions.UserNotFoundException;
 import com.josedev.to_do_simple.models.User;
 import com.josedev.to_do_simple.repositories.TaskRepository;
 import com.josedev.to_do_simple.repositories.UserRepository;
@@ -25,7 +27,7 @@ public class UserService {
     public User findById(Long id) {
         Optional<User> user = this.userRepository.findById(id);
         return user.orElseThrow(
-                () -> new RuntimeException("Usuário não encontrado! Id: " + id + ", Tipo: " + User.class.getName())
+                () -> new UserNotFoundException("User Not Found! Id: " + id + ", Typo: " + User.class.getName())
         );
     }
 
@@ -49,7 +51,7 @@ public class UserService {
         try {
             this.userRepository.deleteById(id);
         } catch (Exception ex) {
-            throw new RuntimeException("Não é possível excluir pois há entidades relacionadas!");
+            throw new UserHasRelatedEntitiesException("Cannot delete as there are related entities!");
         }
     }
 }
